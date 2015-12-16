@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Game</title>
+  <meta name="viewport" content="user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+  <script src="js/quintus.js"></script>
+  <script src="js/quintus_2d.js"></script>
+  <script src="js/quintus_anim.js"></script>
+  <script src="js/quintus_audio.js"></script>
+  <script src="js/quintus_input.js"></script>
+  <script src="js/quintus_scenes.js"></script>
+  <script src="js/quintus_sprites.js"></script>
+  <script src="js/quintus_tmx.js"></script>
+  <script src="js/quintus_touch.js"></script>
+  <script src="js/quintus_ui.js"></script>
+  <script src="script/zombie-gui.js"></script>
+  <script src="script/zombie-enemy.js"></script>
+  <script src="script/zombie-plant.js"></script>
+  <script src="script/zombie-gameplay.js"></script>
+  <style>
+    body{
+      background-color: black;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    window.addEventListener("load",function(){
+      var Q = window.Q =Quintus ({development: true})
+        .include('Sprites,Scenes, 2D, UI, Input, Touch, ZombiesGUI,ZombiesEnemy,ZombiePlants,ZombiesGameplay')
+        .setup({
+          width: 1080,
+          height: 720,
+          scaleToFit: true
+        });
+        //Apagar la gravedad
+        Q.gravityX = 0;
+        Q.gravityY = 0;
+        //Constantes
+        Q.SPRITE_SUN = 2;
+        Q.SPRITE_ZOMBIE = 4;
+        Q.SPRITE_PLANT = 8;
+        Q.SPRITE_BULLET = 16;
+        Q.SPRITE_GROUND = 32;
+        Q.SPRITE_UI = 64;
+        Q.touch(Q.SPRITE_UI | Q.SPRITE_SUN | Q.SPRITE_GROUND);
+        Q.scene('level', function(stage) {
+          var level = new Q.Level({levelData: stage.options['levelData']});
+          stage.insert(level);
+
+          //insertando plantas
+          var planta1 = new Q.Plant(
+            Q._extend({x:600, y:400},Q.plantTypes['carnivorous'])
+          );
+          var planta2 = new Q.Plant(
+            Q._extend({x:600, y:500},Q.plantTypes['chili'])
+          );
+          var planta3 = new Q.Plant(
+            Q._extend({x:600, y:300},Q.plantTypes['carnivorous'])
+          );
+          var planta4 = new Q.Plant(
+            Q._extend({x:300, y:300},Q.plantTypes['sunflower'])
+          );
+          stage.insert(planta1);
+          stage.insert(planta2);
+          stage.insert(planta3);
+          stage.insert(planta4);
+          var sidePanel = new Q.SidePanel({
+            plantTypes: stage.options['levelData']['availablePlants']
+          });
+          stage.insert(sidePanel);
+        });
+        Q.load("background.png, sun.png, zombie1.png, zombie2.png, zombie3.png, chicken.png, carnivorousplant.png, chilli.png, sunflower.png, corn.png, bullet.png, level1.json", function(){
+          Q.state.reset({ sun: 100 });
+
+          Q.stageScene('level', {levelData: Q.assets['level1.json']});
+          Q.stageScene("sun",1);
+        })
+    });
+  </script>
+</body>
+</html>
